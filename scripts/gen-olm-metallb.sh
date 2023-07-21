@@ -133,7 +133,7 @@ spec:
   ipAddressPools:
   - internalapi
   interfaces:
-  - ${INTERFACE}.20
+  - ${INTERFACE}.${INTERNAL_API_VLAN_ID}
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
@@ -144,7 +144,7 @@ spec:
   ipAddressPools:
   - storage
   interfaces:
-  - ${INTERFACE}.21
+  - ${INTERFACE}.${STORAGE_VLAN_ID}
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
@@ -155,5 +155,5 @@ spec:
   ipAddressPools:
   - tenant
   interfaces:
-  - ${INTERFACE}.22
+  - ${INTERFACE}.${TENANT_VLAN_ID}
 EOF_CAT

@@ -47,9 +47,9 @@ spec:
       "master": "${INTERFACE}",
       "ipam": {
         "type": "whereabouts",
-        "range": "192.168.122.0/24",
-        "range_start": "192.168.122.30",
-        "range_end": "192.168.122.70"
+        "range": "${CTLPLANE_NETWORK_CIDR}",
+        "range_start": "${CTLPLANE_NETWORK_DHCP_START}",
+        "range_end": "${CTLPLANE_NETWORK_DHCP_END}"
       }
     }
 EOF_CAT
@@ -68,7 +68,7 @@ spec:
       "cniVersion": "0.3.1",
       "name": "internalapi",
       "type": "macvlan",
-      "master": "${INTERFACE}.20",
+      "master": "${INTERFACE}.${INTERNAL_API_VLAN_ID}",
       "ipam": {
         "type": "whereabouts",
         "range": "172.17.0.0/24",
@@ -92,7 +92,7 @@ spec:
       "cniVersion": "0.3.1",
       "name": "storage",
       "type": "macvlan",
-      "master": "${INTERFACE}.21",
+      "master": "${INTERFACE}.${STORAGE_VLAN_ID}",
       "ipam": {
         "type": "whereabouts",
         "range": "172.18.0.0/24",
@@ -116,7 +116,7 @@ spec:
       "cniVersion": "0.3.1",
       "name": "tenant",
       "type": "macvlan",
-      "master": "${INTERFACE}.22",
+      "master": "${INTERFACE}.${TENANT_VLAN_ID}",
       "ipam": {
         "type": "whereabouts",
         "range": "172.19.0.0/24",

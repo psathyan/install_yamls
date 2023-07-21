@@ -348,6 +348,19 @@ SWIFT_CR         ?= ${OPERATOR_BASE_DIR}/swift-operator/${SWIFT}
 # CertManager
 CERTMANAGER_TIMEOUT                  ?= 300s
 
+# Ctlplane or machine network variables
+CTLPLANE_NETWORK_CIDR               ?= 192.168.122.0/24
+CTLPLANE_NETWORK_DHCP_START         ?= 192.168.122.30
+CTLPLANE_NETWORK_DHCP_END           ?= 192.168.122.70
+
+# OpenStack related network VLAN IDs
+INTERNAL_API_VLAN_ID        ?= 20
+STORAGE_VLAN_ID             ?= 21
+TENANT_VLAN_ID              ?= 22
+
+# CTLPLANE network is DHCP or static
+CTLPLANE_NETWORK_DHCP       ?= n
+
 # target vars for generic operator install info 1: target name , 2: operator name
 define vars
 ${1}: export OCP_RELEASE=$(OCP_RELEASE)

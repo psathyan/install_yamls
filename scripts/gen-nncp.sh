@@ -13,7 +13,7 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-set -ex
+set -e
 
 if [ -z "${DEPLOY_DIR}" ]; then
     echo "Please set DEPLOY_DIR"; exit 1
@@ -45,7 +45,18 @@ CTLPLANE_IP_ADDRESS_SUFFIX=10
 # we use starts with .10
 IP_ADDRESS_SUFFIX=5
 for WORKER in ${WORKERS}; do
-  cat > ${DEPLOY_DIR}/${WORKER}_nncp.yaml <<EOF_CAT
+    if [ "${CTLPLANE_NETWORK_DHCP}" == "y" ]; then
+        CTLPLANE_NW_CONFIG="dhcp: true
+        enabled: true"
+    else
+        CTLPLANE_NW_CONFIG="address:
+        - ip: 192.168.122.${CTLPLANE_IP_ADDRESS_SUFFIX}
+          prefix-length: 24
+        enabled: true
+        dhcp: false"
+    fi
+
+    cat > ${DEPLOY_DIR}/${WORKER}_nncp.yaml <<EOF_CAT
 apiVersion: nmstate.io/v1
 kind: NodeNetworkConfigurationPolicy
 metadata:
@@ -64,12 +75,12 @@ spec:
         dhcp: false
       ipv6:
         enabled: false
-      name: ${INTERFACE}.20
+      name: ${INTERFACE}.${INTERNAL_API_VLAN_ID}
       state: up
       type: vlan
       vlan:
         base-iface: ${INTERFACE}
-        id: 20
+        id: ${INTERNAL_API_VLAN_ID}
     - description: storage vlan interface
       ipv4:
         address:
@@ -79,12 +90,12 @@ spec:
         dhcp: false
       ipv6:
         enabled: false
-      name: ${INTERFACE}.21
+      name: ${INTERFACE}.${STORAGE_VLAN_ID}
       state: up
       type: vlan
       vlan:
         base-iface: ${INTERFACE}
-        id: 21
+        id: ${STORAGE_VLAN_ID}
     - description: tenant vlan interface
       ipv4:
         address:
@@ -94,19 +105,15 @@ spec:
         dhcp: false
       ipv6:
         enabled: false
-      name: ${INTERFACE}.22
+      name: ${INTERFACE}.${TENANT_VLAN_ID}
       state: up
       type: vlan
       vlan:
         base-iface: ${INTERFACE}
-        id: 22
+        id: ${TENANT_VLAN_ID}
     - description: Configuring ${INTERFACE}
       ipv4:
-        address:
-        - ip: 192.168.122.${CTLPLANE_IP_ADDRESS_SUFFIX}
-          prefix-length: 24
-        enabled: true
-        dhcp: false
+        ${CTLPLANE_NW_CONFIG}
       ipv6:
         enabled: false
       mtu: ${INTERFACE_MTU}
